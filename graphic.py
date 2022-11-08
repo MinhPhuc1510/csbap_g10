@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 
 def graphic(lines, berth_breaks):
     fig, ax = plt.subplots()
-    colors = ['yellow', 'red', '#0099FF', '#EB70AA', 'green', 'blue']
+    colors = ['yellow', 'red', '#0099FF', '#EB70AA', 'green', 'blue', 'purple', "brown", "pink"]
     # with open('result.txt') as txtfile:
     #     data = txtfile.read()
     #     lines = data.split("\n")
