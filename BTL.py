@@ -1,11 +1,14 @@
-import numpy as np
-import sys
-from graphic import graphic
 import random
+import sys
 import time
 
+import numpy as np
+
+from graphic import graphic
 
 np.set_printoptions(threshold=sys.maxsize)
+# np.random.seed(2)
+
 def calculate_objective(input, output):
     result = 0
     for i in range(len(input)):
@@ -21,7 +24,6 @@ def generate_diagram(input, output, s, t):
         for i in range(input.shape[0]):
             diagram[output[i][2]: output[i][2] + input[i][1] , output[i][1]: output[i][1] + input[i][3]] = 0
     return diagram
-
 
 def process_input(diagram, an):
     
@@ -212,14 +214,32 @@ def change_output_to_graph(input, outputs):
     return graphic_data
     
 def a_star_like_tree_search(input, B, berth_lenght, t, berth_breaks):
-    
-    # Need to implement
-    return input
+
+    best_input = input[:B].copy()
+    temp= input[B:].copy()
+  
+    for _ in range(len(input)-B):
+        cost = []
+        outputs = []
+        for m in temp:
+            split_input = best_input.copy()
+            split_input.append(m)
+            output, cost_value = Construction_phrase(split_input, berth_lenght, t, berth_breaks)
+            cost.append(cost_value)
+            outputs.append(output)
+       
+        index = cost.index(min(cost))
+        best_input.append(temp[index])
+        temp.pop(index)
+        if len(temp) ==0:
+            break
+
+    return best_input, outputs[index], min(cost)
 
 
 if __name__ == '__main__':
     start_time = time.time()
-    berth_lenght = 35
+    berth_lenght = 40
     berth_breaks = [20, 32]
     
     input = [
@@ -231,7 +251,9 @@ if __name__ == '__main__':
         [6,15, 12, 8, 1],
         [7,7, 8, 10, 3]
     ]
-    t= sum([i[3] for i in input])*4
+    t = sum([i[3] for i in input])*4
+    B = int((1/2)*len(input))
+    L1= 3
 
     # Sort increasing order according to  vessels arrival time.
     input = sorted(input, key=lambda x:x[2])
@@ -240,13 +262,12 @@ if __name__ == '__main__':
     outputs, cost = Construction_phrase(input, berth_lenght, t, berth_breaks)
 
     # Local_Search
-    input = local_search(10, input, outputs, cost, berth_lenght, berth_breaks, t)
-    best_solution = a_star_like_tree_search(input, len(input)//2, berth_lenght, t, berth_breaks)
-    output_final = Construction_phrase(best_solution, berth_lenght, t, berth_breaks)
-
-    print(f"Solution: {output_final[0]}, with cost is: {output_final[1]}")
+    input = local_search(L1, input, outputs, cost, berth_lenght, berth_breaks, t)
+    best_input, best_solution, cost = a_star_like_tree_search(input, B, berth_lenght, t, berth_breaks)
+    
+    print(f"Solution: {best_solution}, with cost is: {cost}")
     print(f"Time to process: {time.time() - start_time} s")
 
     # Covert to graphic_data
-    graphic_data = change_output_to_graph(best_solution, output_final[0])
+    graphic_data = change_output_to_graph(best_input, best_solution)
     graphic(lines=graphic_data, berth_breaks=berth_breaks)
