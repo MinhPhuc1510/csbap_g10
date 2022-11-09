@@ -163,7 +163,7 @@ def construction_phrase(input, berth_lenght, t, berth_breaks):
                     cost = calculate_objective(input=input[0:i+1], output=outputs)
                     outputs.pop(-1)
                     score = 1/(cost + 0.000001)
-                    if score < 0.9*max:
+                    if score < 0.95*max:
                         continue
                     elif score > max:
                         max = score
@@ -179,7 +179,7 @@ def construction_phrase(input, berth_lenght, t, berth_breaks):
                     cost = calculate_objective(input=input[0:i+1], output=outputs)
                     outputs.pop(-1)
                     score = 1/(cost + 0.000001)
-                    if score < 0.9*max:
+                    if score < 0.95*max:
                         continue
                     elif score > max:
                         max = score
@@ -241,7 +241,8 @@ def a_star_like_tree_search(input, B, berth_lenght, t, berth_breaks):
 
 
 if __name__ == '__main__':
-    berth_lenght, berth_breaks, input = get_input('input_1')
+
+    berth_lenght, berth_breaks, input = get_input('input_10')
     
     print(berth_lenght)
     print(berth_breaks)
@@ -251,7 +252,7 @@ if __name__ == '__main__':
     # berth_breaks = [20, 32]
     
     # input = [
-    #     [1,10, 10, 10, 1],
+    #     [1,10, 1000, 10, 1],
     #     [2,15, 5, 9, 2], 
     #     [3,6, 0, 5, 1],
     #     [4,20,2, 10, 3],
@@ -261,7 +262,7 @@ if __name__ == '__main__':
     # ]
 
     start_time = time.time()
-    t = max([i[2] for i in input]) + sum([i[3] for i in input])
+    t = max([i[2] for i in input]) + int(sum([i[3] for i in input])*(3/4))
 
     B = math.floor(max((7/8)*len(input), len(input) - 20))
     L1= 3
