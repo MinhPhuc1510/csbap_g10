@@ -41,7 +41,7 @@ def graphic(lines, berth_breaks):
         rx, ry = rectangles[r].get_xy()
         cx = rx + rectangles[r].get_width() / 2
         cy = ry + rectangles[r].get_height() / 2
-        ax.annotate(r, (cx, cy), color='black', weight='bold', fontsize=20, ha='center', va='center')
+        ax.annotate(r, (cx, cy), color='black', weight='bold', fontsize=10, ha='center', va='center')
     ax.set_xlim((0, max_x + 1))
     ax.set_ylim((0, max_y + 1))
     ax.set_aspect('equal')
