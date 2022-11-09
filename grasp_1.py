@@ -1,10 +1,12 @@
+import math
 import random
 import sys
 import time
+from test import *
+
 import numpy as np
 
 from graphic import graphic
-from test import *
 
 np.set_printoptions(threshold=sys.maxsize)
 # np.random.seed(2)
@@ -219,7 +221,6 @@ def a_star_like_tree_search(input, B, berth_lenght, t, berth_breaks):
 
     best_input = input[:B].copy()
     temp= input[B:].copy()
-  
     for _ in range(len(input)-B):
         cost = []
         outputs = []
@@ -256,15 +257,13 @@ if __name__ == '__main__':
     #     [4,20,2, 10, 3],
     #     [5,5, 15, 5, 1],
     #     [6,15, 12, 8, 1],
-    #     [7,7, 8, 10, 3], [8,5, 15, 5, 1],
-    #     [8,15, 12, 8, 1],
-    #     [10,7, 8, 10, 3]
+    #     [7,7, 8, 10, 3]
     # ]
 
     start_time = time.time()
     t = max([i[2] for i in input]) + sum([i[3] for i in input])
 
-    B = int(max((7/8)*len(input), 20 -len(input)))
+    B = math.floor(max((7/8)*len(input), len(input) - 20))
     L1= 3
 
     # Sort increasing order according to  vessels arrival time.
