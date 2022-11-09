@@ -1,10 +1,10 @@
 import random
 import sys
 import time
-
 import numpy as np
 
 from graphic import graphic
+from test import *
 
 np.set_printoptions(threshold=sys.maxsize)
 # np.random.seed(2)
@@ -238,19 +238,26 @@ def a_star_like_tree_search(input, B, berth_lenght, t, berth_breaks):
 
 
 if __name__ == '__main__':
-    start_time = time.time()
-    berth_lenght = 40
-    berth_breaks = [20, 32]
+    berth_lenght, berth_breaks, input = get_input('input_1')
     
-    input = [
-        [1,10, 10, 10, 1],
-        [2,15, 5, 9, 2], 
-        [3,6, 0, 5, 1],
-        [4,20,2, 10, 3],
-        [5,5, 15, 5, 1],
-        [6,15, 12, 8, 1],
-        [7,7, 8, 10, 3]
-    ]
+    print(berth_lenght)
+    print(berth_breaks)
+    print(input)
+    
+    # berth_lenght = 40
+    # berth_breaks = [20, 32]
+    
+    # input = [
+    #     [1,10, 10, 10, 1],
+    #     [2,15, 5, 9, 2], 
+    #     [3,6, 0, 5, 1],
+    #     [4,20,2, 10, 3],
+    #     [5,5, 15, 5, 1],
+    #     [6,15, 12, 8, 1],
+    #     [7,7, 8, 10, 3]
+    # ]
+
+    start_time = time.time()
     t = sum([i[3] for i in input])*4
     B = int((1/2)*len(input))
     L1= 3
