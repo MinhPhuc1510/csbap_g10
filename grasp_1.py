@@ -188,6 +188,7 @@ def construction_phrase(input, berth_lenght, t, berth_breaks):
 
             if len(valid_position) == 0:
                 print("No solutions found")
+                return -1, -1
                 exit(-1)
             
             probability = np.array(costs)/np.sum(np.array(costs))
@@ -240,51 +241,38 @@ def a_star_like_tree_search(input, B, berth_lenght, t, berth_breaks):
     return best_input, outputs[index], min(cost)
 
 
-if __name__ == '__main__':
+# if __name__ == '__main__':
 
-    berth_lenght, berth_breaks, input = get_input('input_10')
+#     berth_lenght, berth_breaks, input = get_input('input_1')
     
-    print(berth_lenght)
-    print(berth_breaks)
-    print(input)
-    
-    # berth_lenght = 40
-    # berth_breaks = [20, 32]
-    
-    # input = [
-    #     [1,10, 1000, 10, 1],
-    #     [2,15, 5, 9, 2], 
-    #     [3,6, 0, 5, 1],
-    #     [4,20,2, 10, 3],
-    #     [5,5, 15, 5, 1],
-    #     [6,15, 12, 8, 1],
-    #     [7,7, 8, 10, 3]
-    # ]
+#     print(berth_lenght)
+#     print(berth_breaks)
+#     print(input)
 
-    start_time = time.time()
-    t = max([i[2] for i in input]) + int(sum([i[3] for i in input])*(3/4))
+#     start_time = time.time()
+#     t = max([i[2] for i in input]) + int(sum([i[3] for i in input])*(3/4))
 
-    B = math.floor(max((7/8)*len(input), len(input) - 20))
-    L1= 3
+#     B = math.floor(max((7/8)*len(input), len(input) - 20))
+#     L1= 3
 
-    # Sort increasing order according to  vessels arrival time.
-    input = sorted(input, key=lambda x:x[2])
+#     # Sort increasing order according to  vessels arrival time.
+#     input = sorted(input, key=lambda x:x[2])
 
-    # Greedy_Randomized_Construction
-    time_fre = time.time()
-    outputs, cost = construction_phrase(input, berth_lenght, t, berth_breaks)
-    print(f'Greedy_Randomized_Construction {time.time() - time_fre} s')
+#     # Greedy_Randomized_Construction
+#     time_fre = time.time()
+#     outputs, cost = construction_phrase(input, berth_lenght, t, berth_breaks)
+#     print(f'Greedy_Randomized_Construction {time.time() - time_fre} s')
 
-    # Local_Search
-    time_search = time.time()
-    input = local_search(L1, input, outputs, cost, berth_lenght, berth_breaks, t)
+#     # Local_Search
+#     time_search = time.time()
+#     input = local_search(L1, input, outputs, cost, berth_lenght, berth_breaks, t)
 
-    best_input, best_solution, cost = a_star_like_tree_search(input, B, berth_lenght, t, berth_breaks)
-    print(f'Local_Search {time.time() - time_search} s')
+#     best_input, best_solution, cost = a_star_like_tree_search(input, B, berth_lenght, t, berth_breaks)
+#     print(f'Local_Search {time.time() - time_search} s')
 
-    print(f"Solution: {best_solution}, with cost is: {cost}")
-    print(f"Time to process: {time.time() - start_time} s")
+#     print(f"Solution: {best_solution}, with cost is: {cost}")
+#     print(f"Time to process: {time.time() - start_time} s")
 
-    # Covert to graphic_data
-    graphic_data = change_output_to_graph(best_input, best_solution)
-    graphic(lines=graphic_data, berth_breaks=berth_breaks)
+#     # Covert to graphic_data
+#     graphic_data = change_output_to_graph(best_input, best_solution)
+#     graphic(lines=graphic_data, berth_breaks=berth_breaks)
