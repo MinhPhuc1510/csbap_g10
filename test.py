@@ -87,7 +87,7 @@ def test(inputList):
             graphic_save(lines=graphic_data, berth_breaks=berth_breaks, input=_input)
 
 def test_all():
-    inputList = ['input_' + str(i) for i in range(1, 16)]
+    inputList = ['input_' + str(i) for i in range(17, 21)]
     test(inputList)
 
 if __name__ == '__main__':
