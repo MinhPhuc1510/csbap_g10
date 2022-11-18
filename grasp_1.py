@@ -24,6 +24,9 @@ def generate_diagram(input, output, s, t):
     diagram = np.ones((s, t))
 
     if input.shape[0] !=0 and output.shape[0] !=0:
+        if t < np.max(output[:,1]) + np.max(input[:,3]):
+            t = np.max(output[:,1]) + np.max(input[:,3]) + 1
+        diagram = np.ones((s, t))
         for i in range(input.shape[0]):
             diagram[output[i][2]: output[i][2] + input[i][1] , output[i][1]: output[i][1] + input[i][3]] = 0
     return diagram
@@ -108,12 +111,12 @@ def validate_berth_break(top, bot, input, break_berths, diagram, berth_lenght):
         if (top[0] - input[1]) < 0:
             return False
 
-        for m in range(top[0]- input[1], top[0]):
-            for n in range(top[1], top[1] + input[3]):
-                if diagram[m,n] == 0:
-                    return False
-        if not np.all(diagram[top[0]- input[1]:top[0], top[1]:top[1] + input[3]]):
-            return False
+        if top[1] + input[3] > diagram.shape[1]:
+            if not np.all(diagram[top[0]- input[1]:top[0], top[1]:]):
+                return False
+        else:
+            if not np.all(diagram[top[0]- input[1]:top[0], top[1]:top[1] + input[3]]):
+                return False
 
     if bot:
         for i in break_berths:
@@ -123,8 +126,12 @@ def validate_berth_break(top, bot, input, break_berths, diagram, berth_lenght):
         if (bot[0] + input[1]) > berth_lenght:
             return False
 
-        if not np.all(diagram[bot[0] : bot[0] + input[1], bot[1]:bot[1] + input[3]]):
-            return False
+        if bot[1] + input[3] > diagram.shape[1]:
+            if not np.all(diagram[bot[0] : bot[0] + input[1], bot[1]:]):
+                return False
+        else:
+            if not np.all(diagram[bot[0] : bot[0] + input[1], bot[1]:bot[1] + input[3]]):
+                return False
     return True
 
 
@@ -139,7 +146,8 @@ def construction_phrase(input, berth_lenght, t, berth_breaks):
             # find all possible positions
             possible_poisition = process_input(diagram, input[i][2])[1]
             tops, bots = possible_poisition["class_1_top"], possible_poisition["class_1_bot"]
-        
+           
+
             for  b in berth_breaks:
                 for k in range(len(tops)):
                     break_poisition =(b, tops[k][1])  
@@ -149,12 +157,14 @@ def construction_phrase(input, berth_lenght, t, berth_breaks):
                     break_poisition =(b, bots[m][1])
                     bots.append(break_poisition)
                 bots.append((b, input[i][2]))
- 
+
+            bots = list(set(bots))
+            tops =  list(set(tops))
             costs = []
             max = 0
             valid_position = []
 
-            for loc in list(set(bots)):
+            for loc in bots:
                 if not validate_berth_break(top=None, bot=loc, input=input[i],break_berths=berth_breaks,
                 diagram=diagram, berth_lenght=berth_lenght):
                     continue
@@ -170,7 +180,7 @@ def construction_phrase(input, berth_lenght, t, berth_breaks):
                     costs.append(score)
                     valid_position.append(loc)
 
-            for loc in list(set(tops)):
+            for loc in tops:
                 if not validate_berth_break(top=loc, bot=None, input=input[i],break_berths=berth_breaks,
                 diagram=diagram, berth_lenght=berth_lenght):
                         continue
@@ -189,7 +199,7 @@ def construction_phrase(input, berth_lenght, t, berth_breaks):
             if len(valid_position) == 0:
                 print("No solutions found")
                 return -1, -1
-                exit(-1)
+
             
             probability = np.array(costs)/np.sum(np.array(costs))
             index = np.random.choice(range(len(valid_position)), p=probability)
@@ -243,14 +253,15 @@ def a_star_like_tree_search(input, B, berth_lenght, t, berth_breaks):
 
 # if __name__ == '__main__':
 
-#     berth_lenght, berth_breaks, input = get_input('input_1')
+#     # berth_lenght, berth_breaks, input = get_input('input_1')
     
-#     print(berth_lenght)
-#     print(berth_breaks)
-#     print(input)
+#     # print(berth_lenght)
+#     # print(berth_breaks)
+#     # print(input)
+
 
 #     start_time = time.time()
-#     t = max([i[2] for i in input]) + int(sum([i[3] for i in input])*(3/4))
+#     t = max([i[2] for i in input]) + max([i[3] for i in input])
 
 #     B = math.floor(max((7/8)*len(input), len(input) - 20))
 #     L1= 3
@@ -263,16 +274,17 @@ def a_star_like_tree_search(input, B, berth_lenght, t, berth_breaks):
 #     outputs, cost = construction_phrase(input, berth_lenght, t, berth_breaks)
 #     print(f'Greedy_Randomized_Construction {time.time() - time_fre} s')
 
-#     # Local_Search
-#     time_search = time.time()
-#     input = local_search(L1, input, outputs, cost, berth_lenght, berth_breaks, t)
+#     # # Local_Search
+#     # time_search = time.time()
+#     # input = local_search(L1, input, outputs, cost, berth_lenght, berth_breaks, t)
 
-#     best_input, best_solution, cost = a_star_like_tree_search(input, B, berth_lenght, t, berth_breaks)
-#     print(f'Local_Search {time.time() - time_search} s')
+#     # best_input, best_solution, cost = a_star_like_tree_search(input, B, berth_lenght, t, berth_breaks)
+#     # print(f'Local_Search {time.time() - time_search} s')
 
-#     print(f"Solution: {best_solution}, with cost is: {cost}")
-#     print(f"Time to process: {time.time() - start_time} s")
+#     # print(f"Solution: {best_solution}, with cost is: {cost}")
+#     # print(f"Time to process: {time.time() - start_time} s")
 
 #     # Covert to graphic_data
-#     graphic_data = change_output_to_graph(best_input, best_solution)
+#     # print(best_input, best_solution)
+#     graphic_data = change_output_to_graph(input, outputs)
 #     graphic(lines=graphic_data, berth_breaks=berth_breaks)

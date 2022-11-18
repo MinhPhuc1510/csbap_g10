@@ -35,13 +35,15 @@ def test(inputList):
         print(f"Number of vessels: {len(input)}")
 
         start_time = time.time()
-        t = max([i[2] for i in input]) + int(sum([i[3] for i in input])*(3/4))
+      
 
         B = math.floor(max((7/8)*len(input), len(input) - 20))
+    
         L1= 3
 
         # Sort increasing order according to  vessels arrival time.
         input = sorted(input, key=lambda x:x[2])
+        t = input[1][2] + input[1][3]
 
         # Greedy_Randomized_Construction
         time_fre = time.time()
