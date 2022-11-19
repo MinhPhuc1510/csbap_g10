@@ -336,48 +336,52 @@ def graphic(lines, berth_breaks, file_output):
     plt.grid(color='green', linestyle='--', linewidth=0.5)
     plt.xticks(range(0, max_x + 1, ))
     plt.yticks(range(0, max_y + 1))
-    plt.show()
     plt.savefig(file_output)
 
 if __name__ == '__main__':
-    input_file = 'input_20'
-    berth_lenght, berth_breaks, input = get_input(input_file)
+    for i in range(1, 21):
 
-    print(berth_lenght)
-    print(berth_breaks)
-    print(input)
+        input_file = 'input_' + str(i)
+        print('Run result for input: ' + input_file)
+        berth_lenght, berth_breaks, input = get_input(input_file)
 
-    start_time = time.time()
-    t = 1
+        print(berth_lenght)
+        print(berth_breaks)
+        print(input)
 
-    B = math.floor(max((7 / 8) * len(input), len(input) - 20))
-    LB = math.floor(max((3 / 4) * len(input), len(input) - 40))
-    L1 = 3
-    L2 = 5
-    L3 = 10
+        start_time = time.time()
+        t = 1
 
-    # Greedy_Randomized_Construction
-    time_fre = time.time()
-    outputs, cost = construction_phrase(input, berth_lenght, t, berth_breaks)
+        B = math.floor(max((7 / 8) * len(input), len(input) - 20))
+        LB = math.floor(max((3 / 4) * len(input), len(input) - 40))
+        L1 = 3
+        L2 = 5
+        L3 = 10
 
-    if outputs == -1:
-        print('No solution found!')
-    print(f'Greedy_Randomized_Construction {time.time() - time_fre} s')
+        # Greedy_Randomized_Construction
+        time_fre = time.time()
+        outputs, cost = construction_phrase(input, berth_lenght, t, berth_breaks)
 
-    # Local_Search
-    time_search = time.time()
-    input, decrease_B = local_search(L1, L2, L3, L4, L5, input, outputs, cost, berth_lenght, berth_breaks, t)
+        if outputs == -1:
+            print('No solution found!')
+            continue
+        print(f'Greedy_Randomized_Construction {time.time() - time_fre} s')
 
-    B = max(B - decrease_B, LB)
+        # Local_Search
+        time_search = time.time()
+        input, decrease_B = local_search(L1, L2, L3, L4, L5, input, outputs, cost, berth_lenght, berth_breaks, t)
 
-    best_input, best_solution, cost = a_star_like_tree_search(input, B, berth_lenght, t, berth_breaks)
-    print(f'Local_Search {time.time() - time_search} s')
+        B = max(B - decrease_B, LB)
 
-    print(f"Solution: {best_solution}, with cost is: {cost}")
-    print(f"Time to process: {time.time() - start_time} s")
+        best_input, best_solution, cost = a_star_like_tree_search(input, B, berth_lenght, t, berth_breaks)
+        print(f'Local_Search {time.time() - time_search} s')
 
-    # Covert to graphic_data
-    graphic_data = change_output_to_graph(best_input, best_solution)
-    file_output = input_file.replace('in', 'out')
-    graphic(lines=graphic_data, berth_breaks=berth_breaks,
-            file_output = './output_grasp_2/' + file_output)
+        print(f"Solution: {best_solution}, with cost is: {cost}")
+        print(f"Time to process: {time.time() - start_time} s")
+        print('----------------------------------------------------------')
+
+        # Covert to graphic_data
+        graphic_data = change_output_to_graph(best_input, best_solution)
+        file_output = input_file.replace('in', 'out')
+        graphic(lines=graphic_data, berth_breaks=berth_breaks,
+                file_output='./output_grasp_2/' + file_output)
