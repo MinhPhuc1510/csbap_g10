@@ -24,7 +24,7 @@ def generate_diagram(input, output, s, t):
     diagram = np.ones((s, t))
 
     if input.shape[0] !=0 and output.shape[0] !=0:
-        if t < np.max(output[:,1]) + np.max(input[:,3]):
+        if t <= np.max(output[:,1]) + np.max(input[:,3]):
             t = np.max(output[:,1]) + np.max(input[:,3]) + 1
         diagram = np.ones((s, t))
         for i in range(input.shape[0]):
@@ -42,7 +42,7 @@ def process_input(diagram, an):
     s, t = diagram.shape
 
     diagram[:, 0:an] = 0
-    result_pad = np.pad(diagram, [(1, 1), (1, 1)], mode='constant')
+    result_pad = np.pad(diagram, [(1, 1), (1, 1)], 'constant')
     for i in range(s+1):
         for j in range(t+1):
             class_temp = [result_pad[i + 1, j+1], result_pad[i + 1, j], result_pad[i, j], result_pad[i, j+1]]
@@ -146,7 +146,6 @@ def construction_phrase(input, berth_lenght, t, berth_breaks):
             # find all possible positions
             possible_poisition = process_input(diagram, input[i][2])[1]
             tops, bots = possible_poisition["class_1_top"], possible_poisition["class_1_bot"]
-           
 
             for  b in berth_breaks:
                 for k in range(len(tops)):
@@ -160,6 +159,7 @@ def construction_phrase(input, berth_lenght, t, berth_breaks):
 
             bots = list(set(bots))
             tops =  list(set(tops))
+           
             costs = []
             max = 0
             valid_position = []
@@ -258,33 +258,48 @@ def a_star_like_tree_search(input, B, berth_lenght, t, berth_breaks):
 #     # print(berth_lenght)
 #     # print(berth_breaks)
 #     # print(input)
-
+#     berth_lenght = 35
+#     berth_breaks = [20, 32]
+    
+#     input = [
+#         [1,10, 10, 10, 1],
+#         [2,15, 5, 9, 2], 
+#         [3,6, 0, 5, 1],
+#         [4,20,2, 10, 3],
+#         [5,5, 15, 5, 1],
+#         [6,15, 12, 8, 1],
+#         [7,7, 8, 10, 3],
+#          [8,5, 15, 5, 1],
+#         [9,15, 12, 8, 1],
+#         [10,7, 8, 10, 3],
+#     ]
 
 #     start_time = time.time()
-#     t = max([i[2] for i in input]) + max([i[3] for i in input])
 
-#     B = math.floor(max((7/8)*len(input), len(input) - 20))
+#     B = math.floor(max((5/8)*len(input), len(input) - 20))
 #     L1= 3
 
 #     # Sort increasing order according to  vessels arrival time.
 #     input = sorted(input, key=lambda x:x[2])
+#     t = input[1][2] + input[1][3]
+    
 
 #     # Greedy_Randomized_Construction
 #     time_fre = time.time()
 #     outputs, cost = construction_phrase(input, berth_lenght, t, berth_breaks)
 #     print(f'Greedy_Randomized_Construction {time.time() - time_fre} s')
 
-#     # # Local_Search
-#     # time_search = time.time()
-#     # input = local_search(L1, input, outputs, cost, berth_lenght, berth_breaks, t)
+#     # Local_Search
+#     time_search = time.time()
+#     input = local_search(L1, input, outputs, cost, berth_lenght, berth_breaks, t)
 
-#     # best_input, best_solution, cost = a_star_like_tree_search(input, B, berth_lenght, t, berth_breaks)
-#     # print(f'Local_Search {time.time() - time_search} s')
+#     best_input, best_solution, cost = a_star_like_tree_search(input, B, berth_lenght, t, berth_breaks)
+#     print(f'Local_Search {time.time() - time_search} s')
 
-#     # print(f"Solution: {best_solution}, with cost is: {cost}")
-#     # print(f"Time to process: {time.time() - start_time} s")
+#     print(f"Solution: {best_solution}, with cost is: {cost}")
+#     print(f"Time to process: {time.time() - start_time} s")
 
 #     # Covert to graphic_data
 #     # print(best_input, best_solution)
-#     graphic_data = change_output_to_graph(input, outputs)
+#     graphic_data = change_output_to_graph(best_input, best_solution)
 #     graphic(lines=graphic_data, berth_breaks=berth_breaks)
