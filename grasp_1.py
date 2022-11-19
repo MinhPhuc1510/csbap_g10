@@ -44,7 +44,7 @@ def process_input(diagram, an):
     diagram[:, 0:an] = 0
     result_pad = np.pad(diagram, [(1, 1), (1, 1)], 'constant')
     for i in range(s+1):
-        for j in range(t+1):
+        for j in range(an, t+1):
             class_temp = [result_pad[i + 1, j+1], result_pad[i + 1, j], result_pad[i, j], result_pad[i, j+1]]
             if class_temp == [0, 0, 0, 1] or class_temp == [0, 1, 0, 1]:
                 class_1_top.append((i,j))
@@ -258,7 +258,7 @@ def a_star_like_tree_search(input, B, berth_lenght, t, berth_breaks):
 #     # print(berth_lenght)
 #     # print(berth_breaks)
 #     # print(input)
-#     berth_lenght = 35
+#     berth_lenght = 100
 #     berth_breaks = [20, 32]
     
 #     input = [
@@ -269,9 +269,6 @@ def a_star_like_tree_search(input, B, berth_lenght, t, berth_breaks):
 #         [5,5, 15, 5, 1],
 #         [6,15, 12, 8, 1],
 #         [7,7, 8, 10, 3],
-#          [8,5, 15, 5, 1],
-#         [9,15, 12, 8, 1],
-#         [10,7, 8, 10, 3],
 #     ]
 
 #     start_time = time.time()
