@@ -26,11 +26,15 @@ def calculate_objective(input, output):
 
 
 def generate_diagram(input, output, s, t):
-    diagram = np.ones((s, t))
 
     if input.shape[0] != 0 and output.shape[0] != 0:
+        if t <= np.max(output[:, 1]) + np.max(input[:, 3]):
+            t = np.max(output[:, 1]) + np.max(input[:, 3]) + 1
+        diagram = np.ones((s, t))
         for i in range(input.shape[0]):
             diagram[output[i][2]: output[i][2] + input[i][1], output[i][1]: output[i][1] + input[i][3]] = 0
+    else :
+        diagram = np.ones((s, t))
     return diagram
 
 
@@ -46,7 +50,7 @@ def process_input(diagram, an):
     diagram[:, 0:an] = 0
     result_pad = np.pad(diagram, [(1, 1), (1, 1)], mode='constant')
     for i in range(s + 1):
-        for j in range(t + 1):
+        for j in range(an, t + 1):
             class_temp = [result_pad[i + 1, j + 1], result_pad[i + 1, j], result_pad[i, j], result_pad[i, j + 1]]
             if class_temp == [0, 0, 0, 1] or class_temp == [0, 1, 0, 1]:
                 class_1_top.append((i, j))
@@ -125,12 +129,14 @@ def validate_berth_break(top, bot, input, break_berths, diagram, berth_lenght):
         if (top[0] - input[1]) < 0:
             return False
 
-        for m in range(top[0] - input[1], top[0]):
-            for n in range(top[1], top[1] + input[3]):
-                if diagram[m, n] == 0:
-                    return False
-        if not np.all(diagram[top[0] - input[1]:top[0], top[1]:top[1] + input[3]]):
-            return False
+        if top[1] + input[3] > diagram.shape[1]:
+            if not np.all(diagram[top[0] - input[1]:top[0], top[1]:]):
+                return False
+        else:
+            for m in range(top[0] - input[1], top[0]):
+                for n in range(top[1], top[1] + input[3]):
+                    if diagram[m, n] == 0:
+                        return False
 
     if bot:
         for i in break_berths:
@@ -140,8 +146,12 @@ def validate_berth_break(top, bot, input, break_berths, diagram, berth_lenght):
         if (bot[0] + input[1]) > berth_lenght:
             return False
 
-        if not np.all(diagram[bot[0]: bot[0] + input[1], bot[1]:bot[1] + input[3]]):
-            return False
+        if bot[1] + input[3] > diagram.shape[1]:
+            if not np.all(diagram[bot[0]: bot[0] + input[1], bot[1]:]):
+                return False
+        else:
+            if not np.all(diagram[bot[0]: bot[0] + input[1], bot[1]:bot[1] + input[3]]):
+                return False
     return True
 
 
@@ -211,7 +221,6 @@ def construction_phrase(input, berth_lenght, t, berth_breaks):
         if len(valid_position) == 0:
             print("No solutions found")
             return -1, -1
-            exit(-1)
 
         probability = np.array(costs) / np.sum(np.array(costs))
         index = np.random.choice(range(len(valid_position)), p=probability)
@@ -282,24 +291,27 @@ def a_star_like_tree_search(input, B, berth_lenght, t, berth_breaks):
 
 
 if __name__ == '__main__':
-    berth_lenght, berth_breaks, input = get_input('input_20')
+    berth_lenght, berth_breaks, input = get_input('input_19')
 
     print(berth_lenght)
     print(berth_breaks)
     print(input)
 
     start_time = time.time()
-    t = max([i[2] for i in input]) + int(sum([i[3] for i in input]) * (3 / 4))
+    t = 1
 
     B = math.floor(max((7 / 8) * len(input), len(input) - 20))
     LB = math.floor(max((3 / 4) * len(input), len(input) - 40))
-    L1 = 15
+    L1 = 3
     L2 = 5
     L3 = 10
 
     # Greedy_Randomized_Construction
     time_fre = time.time()
     outputs, cost = construction_phrase(input, berth_lenght, t, berth_breaks)
+
+    if outputs == -1:
+        print('No solution found!')
     print(f'Greedy_Randomized_Construction {time.time() - time_fre} s')
 
     # Local_Search
